@@ -143,7 +143,7 @@ def get_expected_sky_cov(ublDict,beammodel,antspos,long_0,lalt_0,cl_21cm,cl_gal_
 
 
 
-def get_redblock_inf(redblock_cov_matrix_eig,threshold):
+def get_redblock_svd(redblock_cov_matrix_eig,threshold):
     """
     This fuction reduce the size of redundant block covariance matrix by select the only eigenmodes
     with magnitude above expected signal threshold and set to zero the rest of modes.
@@ -205,8 +205,8 @@ def get_redblock_inf(redblock_cov_matrix_eig,threshold):
         	for j in range(len(myeig_use)):
             		myvecs_use[:,j]= myvecs_use[:,j]*np.sqrt(myeig_use[j])
             
-            		q[2*edges[i]:2*edges[i+1]:2,2*j]=  np.column_stack(myvecs_use[:,j])
-            		q[(2*edges[i]+1):2*edges[i+1]:2,2*j+1]= np.column_stack(myvecs_use[:,j])
+            		R[2*edges[i]:2*edges[i+1]:2,2*j]=  np.column_stack(myvecs_use[:,j])
+            		R[(2*edges[i]+1):2*edges[i+1]:2,2*j+1]= np.column_stack(myvecs_use[:,j])
 
 	R_all_freq.append(R)
 
