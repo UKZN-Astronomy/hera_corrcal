@@ -151,12 +151,12 @@ def get_ants_voltage(E_field,eff_len,z_angle_arr):
 
 
 	"""
+
 	if E_field.shape == eff_len.shape:
 		pass
 	else:
 		print "E_field and eff_len have different shape"
 		
-		break
 
 
 	ant_voltage_outp = np.dot(E_field,eff_len)
