@@ -7,33 +7,31 @@ from scipy import special as sp
 
 #primary beam function
 
-def gaussian_beam(theta,phi,sigma_fwhm,e_theta,e_phi,e_sigma):
+def gaussian_beam(theta_c, phi_c,theta,phi,sigma_fwhm,e_theta,e_phi,e_sigma):
     """
     This function compute the 2d gassian beam for full width half maximum,sigma_fwhm,
     value at location theta,phi (radians)
     """
     
     #Guassian Primary beam
-    gpbeam = (1.0/np.sqrt(2.0*np.pi*(sigma_fwhm + e_sigma)**2))*np.exp(-((theta + e_theta)**2 + (phi + e_phi)**2)/(2.0*(sigma_fwhm + e_sigma)**2))
-    norm =  1.0/np.sqrt(2.0*np.pi*(sigma_fwhm + e_sigma)**2)
-    norm_gpbeam = gpbeam/norm
+    gpbeam = np.exp(-((theta -theta_c + e_theta)**2 + (phi - phi_c+ e_phi)**2)/(2.0*(sigma_fwhm + e_sigma)**2))
     
-    return norm_gpbeam
+    return gpbeam
 
 def sigma_func(d,freq_i):
     """
     This function compute the sigma_fwhm base on the Limits of Resolution: The Rayleigh Criterion
     
     """
-    lambda_ = 3.0*10**8/freq_i # frequency in Hertz
-    sigma = 1.22*lambda_/d
+    lambda_ = (3.0*10**8)/freq_i # frequency in Hertz
+    sigma = 0.44*(lambda_/d)
     return sigma
     
 
 
 #parametized airydisk function
 
-def param_airydisk(theta_x,phi_y,a_x,a_y,theta_c,phi_c,d_diam,d_block,freq_i):
+def param_airydisk(theta_c,phi_c,theta_x,phi_y,a_x,a_y,d_diam,d_block,freq_i, theta_error =0.0,phi_error=0.0):
 	"""
 	This function compute the airy disk function given the angular coordinate theta_x and phi_y in radians, center coodinate 		(theta_c,phi_c),  major and semi-major parameters a_x and a_y in meters, dish diameter d_diam, diameterof blocking cage d_block  		frequency freq_i
 	
@@ -44,9 +42,9 @@ def param_airydisk(theta_x,phi_y,a_x,a_y,theta_c,phi_c,d_diam,d_block,freq_i):
     	wavelen = 3e8/freq_i
     	b= d_block/d_diam
     	k = (2.0*np.pi)/wavelen
-    	sqrt_term = np.sqrt((a_x**2)*(theta_x- theta_c)**2 + (a_y**2)*(phi_y - phi_c)**2)
+    	sqrt_term = np.sqrt((a_x**2)*(theta_x- (theta_c + theta_error) )**2 + (a_y**2)*(phi_y - (phi_c +phi_error))**2)
     
-    	power_pattern = np.power((2.0*sp.j1(k*sqrt_term)-b*sp.j1(b*k*sqrt_term))/((1-b**2)*k*sqrt_term),2)
+    	power_pattern = np.power(2.0*(sp.j1(k*sqrt_term)-b*sp.j1(b*k*sqrt_term))/((1-b**2)*k*sqrt_term),2)
     
     	return power_pattern
 
